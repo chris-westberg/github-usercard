@@ -1,21 +1,21 @@
 // import Axios from "axios";
 
 //-----SHORTHAND FUNCTIONS-----
-const element = (el) => {
-  document.createElement(el)
-}
+// const element = (el) => {
+//   document.createElement(el)
+// };
 
-const append = (parent, child) => {
-  parent.appendChild(child)
-}
+// const append = (parent, child) => {
+//   parent.appendChild(child)
+// };
 
-const text = (parent, content) => {
-  parent.textContent = content
-}
+// const text = (parent, content) => {
+//   parent.textContent = content
+// };
 
-const classes = (parent, cla) => {
-  parent.classList.add(cla)
-}
+// const classes = (parent, cla) => {
+//   parent.classList.add(cla)
+// };
 //-----SHORTHAND FUNCTIONS-----
 
 /*
@@ -23,11 +23,13 @@ const classes = (parent, cla) => {
     (replacing the placeholder with your Github name):
     https://api.github.com/users/<your name>
 */
-axios.get('https://api.github.com/users/chris-westberg')
+axios.get('https://cors-anywhere.herokuapp.com/https://api.github.com/users/chris-westberg')
 .then (response => {
-  // console.log(response.data)
+  console.log(response.data)
   let cards = document.querySelector('.cards')
-  append(cards, cardMaker(response.data))
+  cards.appendChild(cardMaker(response.data))
+  // append(cards, cardMaker(response.data))
+
 })
 .catch(err => {
   console.log(err)
@@ -47,7 +49,7 @@ axios.get('https://api.github.com/users/chris-westberg')
 
 /*
   STEP 5: Now that you have your own card getting added to the DOM, either
-    follow this link in your browser https://api.github.com/users/<Your github name>/followers,
+    follow this link in your browser https://api.github.com/users/chris-westberg/followers,
     manually find some other users' github handles, or use the list found at the
     bottom of the page. Get at least 5 different Github usernames and add them as
     Individual strings to the friendsArray below.
@@ -56,7 +58,22 @@ axios.get('https://api.github.com/users/chris-westberg')
     user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const followersArray = ['tetondan',
+  'dustinmyers',
+  'justsml',
+  'luishrd',
+  'bigknell'];
+
+followersArray.forEach(name => {
+  axios.get(`https://cors-anywhere.herokuapp.com/https://api.github.com/users/${name}`)
+  .then(response => {
+    let cards = document.querySelector('.cards')
+    cards.appendChild(cardMaker(response.data))
+  })
+  .catch(err => {
+    console.log(err)
+  })
+})
 
 /*
   STEP 3: Create a function that accepts a single object as its only argument.
@@ -79,52 +96,98 @@ const followersArray = [];
 */
 let cardMaker = (object) => {
   //---Card div---
-  const card = element('div')
-  classes(card, 'card')
+  const card = document.createElement('div')
+  card.classList.add('card')
+  // card.textContent = '\u25bc'
+   card.addEventListener('click', event => {
+     card.classList.toggle('card-open')
+   })
 
   //---Image---
-  const image = element('img')
-  append(card, image)
+  const image = document.createElement('img')
+  card.appendChild(image)
   image.setAttribute('src', object.avatar_url)
-  console.log(image)
+  // console.log(image)
 
   //---Card-info div---
-  const cardInfo = element('div')
-  classes(cardInfo, 'card-info')
-  append(card, cardInfo)
+  const cardInfo = document.createElement('div')
+  // classes(cardInfo, 'card-info')
+  cardInfo.classList.add('card-info')
+  // append(card, cardInfo)
+  card.appendChild(cardInfo)
 
   //---Name H3---
-  const name = element('h3')
-  classes(name, 'name')
-  append(cardInfo, name)
-  text(name, 'Chris Westberg')
+  // const name = element('h3')
+  const name = document.createElement('h3')
+  // classes(name, 'name')
+  name.classList.add('name')
+  // append(cardInfo, name)
+  cardInfo.appendChild(name)
+  // text(name, 'Chris Westberg')
+  name.textContent = object.name
 
   //---Username p---
-  const username = element('p')
-  classes(username, 'username')
-  append(cardInfo, username)
-  text(username, 'chris-westberg')
+  // const username = element('p')
+  const username = document.createElement('p')
+  // classes(username, 'username') 
+  username.classList.add('username')
+  // append(cardInfo, username)
+  cardInfo.appendChild(username)
+  // text(username, 'chris-westberg')
+  username.textContent = object.username
 
   //---Location p---
-  const location = element('p')
+  // const location = element('p')
+  const location = document.createElement('p')
   // text(location, `Location: ${location}`)  <-------- THIS
-  append(cardInfo, location)
+  location.textContent = `Location: ${object.location}`
+  // append(cardInfo, location)
+  cardInfo.appendChild(location)
 
   //---Profile p---
-  const profile = element('p')
-  text(profile, 'Profile:')
-  append(cardInfo, profile)
+  // const profile = element('p')
+  const profile = document.createElement('p')
+  // text(profile, 'Profile:')
+  profile.textContent = 'Profile:'
+  // append(cardInfo, profile)
+  cardInfo.appendChild(profile)
 
   //---profile link---
-  const profLink = element('a')
-  // profLink.setAttribute('href', link)  <--------- THIS
-  append(profile, profLink)
+  // const profLink = element('a')
+  const profLink = document.createElement('a')
+  profLink.setAttribute('href', object.avatar_url)
+  profLink.textContent = object.url
+  // append(profile, profLink)
+  profile.appendChild(profLink)
 
   //---Followers p---
-  const followers = element('p')
+  // const followers = element('p')
+  const followers = document.createElement('p')
+  followers.textContent = `Followers: ${object.followers}`
+  cardInfo.appendChild(followers)
+
+  //---Following p---
+  const following = document.createElement('p')
+  following.textContent = `Following: ${object.following}`
+  cardInfo.appendChild(following)
+
+  //---Bio p---
+  const bio = document.createElement('p')
+  bio.textContent = `Bio: ${object.bio}`
+  cardInfo.appendChild(bio)
+
+  //---Email p---
+  const email = document.createElement('p')
+  email.textContent = `Email: ${object.email}`
+  cardInfo.appendChild(email)
+
+  //---Updated p---
+  var updation = document.createElement('p')
+  updation.textContent = `Last updated: ${object.updated_at}`
+  cardInfo.appendChild(updation)
 
 
-
+  return card
 }
 /*
   List of LS Instructors Github username's:
@@ -134,7 +197,3 @@ let cardMaker = (object) => {
     luishrd
     bigknell
 */
-
-let funcion = function() {
-
-}
